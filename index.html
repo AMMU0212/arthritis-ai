@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Arthritis Detection</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>🦴 Arthritis AI Diagnosis System</h1>
+        <p class="sub">Hospital-Level X-Ray Analysis Tool</p>
+
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+
+            <input type="file" name="image" id="imageInput" required onchange="previewImage(event)">
+
+            <!-- IMAGE PREVIEW -->
+            <img id="preview" style="display:none; width:100%; margin-top:10px; border-radius:10px;">
+
+            <button type="submit" onclick="showLoader()">Analyze X-Ray</button>
+
+        </form>
+
+        <!-- LOADING SPINNER -->
+        <div id="loader"></div>
+
+        {% if prediction %}
+
+        <!-- RESULT BADGE -->
+        <div class="badge {{ prediction|lower }}">
+            {{ prediction }}
+        </div>
+
+        <p>Confidence: {{ confidence }}%</p>
+
+        <!-- CONFIDENCE BAR -->
+        <div class="bar">
+            <div style="width: {{ confidence }}%"></div>
+        </div>
+
+        {% if pdf_file %}
+        <a href="{{ pdf_file }}" download>
+            <button>Download Medical Report</button>
+        </a>
+        {% endif %}
+
+        <!-- PROBABILITY BREAKDOWN -->
+        <div class="prob">
+            <p>Normal: {{ prob0 }}%</p>
+            <p>Mild: {{ prob1 }}%</p>
+            <p>Moderate: {{ prob2 }}%</p>
+            <p>Severe: {{ prob3 }}%</p>
+            <p>Doubtful: {{ prob4 }}%</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<script>
+function previewImage(event){
+    const reader = new FileReader();
+    reader.onload = function(){
+        const img = document.getElementById("preview");
+        img.src = reader.result;
+        img.style.display = "block";
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+function showLoader(){
+    document.getElementById("loader").style.display = "block";
+}
+</script>
+
+</body>
+</html>
